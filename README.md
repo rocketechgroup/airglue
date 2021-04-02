@@ -1,2 +1,2 @@
 # Airconnect
-Connect Airflow Pperators together made simple
+Connect Airflow Operators together made simple
