@@ -1,0 +1,11 @@
+enabled: true
+schedule_interval: "0 2 * * *"
+timezone: "Europe/London"
+tasks:
+  - identifier: example_gcs_to_bq
+    operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
+    argument_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
+    arguments:
+      bucket: "{{ params.gcp_project_id }}_airglue_example_bucket"
+      source_objects: "bigquery/us-states/us-states.csv"
+      destination_project_dataset_table: "airglue_example.gcs_to_bq_table"
