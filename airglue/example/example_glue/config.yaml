@@ -5,7 +5,6 @@ params: # Params to be loaded and available as {{ params }}
   default_dataset: airglue_example
   envs: # Environment variables to be loaded and available as {{ params.envs.<name> }}, undefined ones will be omitted
     - AIRGLUE_GCP_PROJECT_ID
-    - AIRGLUE_GCP_REGION
   vars: # Airflow variables to be loaded and available as {{ params.vars.<name> }}, undefined ones will be omitted
     - example_bucket_name
 tasks:
