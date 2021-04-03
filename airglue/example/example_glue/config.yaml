@@ -9,10 +9,23 @@ params: # Params to be loaded and available as {{ params }}
   vars: # Airflow variables to be loaded and available as {{ params.vars.<name> }}, undefined ones will be omitted
     - example_bucket_name
 tasks:
-  - identifier: example_gcs_to_bq
+  - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     argument_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
-      bucket: "{{ params.vars.example_bucket_name }}"
-      source_objects: "bigquery/us-states/us-states.csv"
+      bucket: "cloud-samples-data"
+      source_objects:
+        - "bigquery/us-states/us-states.csv"
       destination_project_dataset_table: "{{ params.envs.AIRGLUE_GCP_PROJECT_ID }}.{{ params.default_dataset }}.gcs_to_bq_table"
+      write_disposition: "WRITE_TRUNCATE"
+      source_format: "CSV"
+      skip_leading_rows: 1
+      schema_fields:
+        - name: "name"
+          type: "STRING"
+          mode: "NULLABLE"
+        - name: "post_abbr"
+          type: "STRING"
+          mode: "NULLABLE"
+
+

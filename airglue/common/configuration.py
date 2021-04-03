@@ -8,18 +8,6 @@ class EnvConfig:
         pass
 
     @property
-    def gcp_project_id(self):
-        return os.environ['AIRGLUE_GCP_PROJECT_ID']
-
-    @property
-    def gcp_region(self):
-        return os.environ['AIRGLUE_GCP_REGION']
-
-    @property
-    def gcp_infra_project_id(self):
-        return os.environ['AIRGLUE_GCP_INFRA_PROJECT_ID']
-
-    @property
     def src_path(self):
         return os.environ['AIRGLUE_SRC_PATH']
 

@@ -27,8 +27,6 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/secret/gcp-credentials/application_default_credentials.json
 
       - AIRGLUE_GCP_PROJECT_ID=${AIRGLUE_GCP_PROJECT_ID?AIRGLUE_GCP_PROJECT_ID_is_undefined} # GCP project_id
-      - AIRGLUE_GCP_REGION=${AIRGLUE_GCP_REGION?AIRGLUE_GCP_REGION_is_undefined} # GCP default region
-      - AIRGLUE_GCP_INFRA_PROJECT_ID=${AIRGLUE_GCP_INFRA_PROJECT_ID?AIRGLUE_GCP_INFRA_PROJECT_ID_is_undefined} # GCP INFRA PROJECT ID
       - AIRGLUE_SRC_PATH=/opt/airflow/dags
       - AIRGLUE_CONFIG_PATH=/opt/airflow/dags/airglue/example # Example config path
     logging:

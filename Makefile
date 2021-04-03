@@ -1,17 +1,12 @@
 .PHONY: build down up logs exec restart
 
-ENVS := AIRGLUE_GCP_PROJECT_ID=$(AIRGLUE_GCP_PROJECT_ID) \
-	AIRGLUE_GCP_REGION=$(AIRGLUE_GCP_REGION) \
-	AIRGLUE_GCP_INFRA_PROJECT_ID=$(AIRGLUE_GCP_INFRA_PROJECT_ID)
+ENVS := AIRGLUE_GCP_PROJECT_ID=$(AIRGLUE_GCP_PROJECT_ID)
 
-build:
+up:
 	$(ENVS) docker-compose -f docker-compose.yml up -d --build webserver
 
 down:
 	$(ENVS) docker-compose -f docker-compose.yml down
-
-up:
-	$(ENVS) docker-compose -f docker-compose.yml up -d
 
 restart:
 	make down && make up
