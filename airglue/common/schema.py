@@ -2,7 +2,7 @@ import typing
 import copy
 
 from croniter import croniter
-from typing import List, Dict, AnyStr
+from typing import List, Dict
 
 from marshmallow import validate, post_load, Schema, fields
 
@@ -68,17 +68,26 @@ class TaskSchema(Schema):
 
 
 class DagConfig:
-    def __init__(self, enabled: bool, timezone: str, schedule_interval: str, tasks: List[Task]):
+    def __init__(
+            self,
+            enabled: bool,
+            schedule_interval: str,
+            timezone: str,
+            params: Dict,
+            tasks: List[Task]
+    ):
         self.enabled = enabled
-        self.timezone = timezone
         self.schedule_interval = schedule_interval
+        self.timezone = timezone
+        self.params = params
         self.tasks = tasks
 
 
 class DagConfigSchema(Schema):
     enabled = fields.Bool(required=False, missing=True)
-    timezone = fields.Str(required=True)
     schedule_interval = fields.Str(validate=IsValidCron(), missing=None)
+    timezone = fields.Str(required=True)
+    params = fields.Dict(required=False, missing={})
     tasks = fields.List(cls_or_instance=fields.Nested(TaskSchema), required=True)
 
     @post_load
