@@ -1,6 +1,5 @@
 import json
 import yaml
-from airglue.common import schema
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper

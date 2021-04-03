@@ -37,7 +37,7 @@ services:
         max-file: "3"
     volumes:
       - ./airglue:/opt/airflow/dags/airglue
-      - ~/.config/gcloud/application_default_credentials.json:/secret/gcp-credentials/application_default_credentials.json # mount application default credentials only so no keys as used
+      - ~/.config/gcloud/application_default_credentials.json:/secret/gcp-credentials/application_default_credentials.json # mount application default credentials only so no keys are used
     ports:
       - "8082:8080"
     command: webserver

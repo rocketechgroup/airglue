@@ -1,11 +1,18 @@
 enabled: true
 schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
+params: # Params to be loaded and available as {{ params }}
+  default_dataset: airglue_example
+  envs: # Environment variables to be loaded and available as {{ params.envs.<name> }}, undefined ones will be omitted
+    - AIRGLUE_GCP_PROJECT_ID
+    - AIRGLUE_GCP_REGION
+  vars: # Airflow variables to be loaded and available as {{ params.vars.<name> }}, undefined ones will be omitted
+    - example_bucket_name
 tasks:
   - identifier: example_gcs_to_bq
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     argument_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
-      bucket: "{{ params.gcp_project_id }}_airglue_example_bucket"
+      bucket: "{{ params.vars.example_bucket_name }}"
       source_objects: "bigquery/us-states/us-states.csv"
-      destination_project_dataset_table: "airglue_example.gcs_to_bq_table"
+      destination_project_dataset_table: "{{ params.envs.AIRGLUE_GCP_PROJECT_ID }}.{{ params.default_dataset }}.gcs_to_bq_table"

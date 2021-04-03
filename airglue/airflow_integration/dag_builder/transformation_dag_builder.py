@@ -12,6 +12,7 @@ from pydoc import locate
 # Add DAG root path to PYTHONPATH
 sys.path.append(os.environ['AIRGLUE_SRC_PATH'])
 
+from airflow.models import Variable
 from airglue.airflow_integration.dag_builder import dag_builder_util
 from airglue.common.configuration import env_config
 from airglue.common import configuration, schema
@@ -41,7 +42,29 @@ def init_config(config_path, config_extension='yaml') -> List[Dict[str, Any]]:
     return details
 
 
-def create_operator(dag, task: schema.Task):
+def dag_config_to_params(dag_config: schema.DagConfig):
+    params = {'envs': {}, 'vars': {}}
+    envs = dag_config.params.get('envs') if dag_config.params.get('envs') else []
+    vars = dag_config.params.get('vars') if dag_config.params.get('vars') else []
+    for env in envs:
+        params['envs'][env] = os.environ.get(env)
+
+    for var in vars:
+        try:
+            params['vars'][var] = Variable.get(var, deserialize_json=True, default_var=None)
+        except ValueError:
+            params['vars'][var] = Variable.get(var, default_var=None)
+
+    for key, value in dag_config.params.items():
+        if key in ['envs', 'vars']:
+            continue
+
+        params[key] = value
+
+    return params
+
+
+def create_operator(dag, params: dict, task: schema.Task):
     operator_factory_class = locate(task.operator_factory)
     operator_class = locate(task.operator)
 
@@ -55,11 +78,7 @@ def create_operator(dag, task: schema.Task):
         operator=operator_class,
         dag=dag,
         task_id=task.identifier,
-        params={
-            'gcp_project_id': env_config.gcp_project_id,
-            'gcp_infra_project_id': env_config.gcp_infra_project_id,
-            'gcp_region': env_config.gcp_region,
-        },
+        params=params,
         provide_context=True, **task.arguments
     )
 
@@ -86,6 +105,9 @@ def build(**kwargs):
             logging.info(f'DAG {dag_config_path} is disabled')
             continue
 
+        # parse dag vars
+        params = dag_config_to_params(dag_config=dag_config)
+
         dag = dag_builder_util.create_dag(
             dag_id=dag_id,
             start_date=dag_builder_util.get_default_dag_start_date(
@@ -102,7 +124,7 @@ def build(**kwargs):
 
         for task in dag_config.tasks:
             logging.debug(f'### task: {task.__dict__}')
-            operator = create_operator(dag=dag, task=task)
+            operator = create_operator(dag=dag, params=params, task=task)
             created_operator_tasks[task.identifier] = operator
 
         for task in dag_config.tasks:
