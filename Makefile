@@ -2,11 +2,14 @@
 
 ENVS := AIRGLUE_GCP_PROJECT_ID=$(AIRGLUE_GCP_PROJECT_ID)
 
-up:
+build:
 	$(ENVS) docker-compose -f docker-compose.yml up -d --build webserver
 
 down:
 	$(ENVS) docker-compose -f docker-compose.yml down
+
+up:
+	$(ENVS) docker-compose -f docker-compose.yml up -d
 
 restart:
 	make down && make up

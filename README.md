@@ -18,14 +18,20 @@ TBC
 ## Getting Started
 The following instructions will get Airglue up and running in Docker.
 
-### Start up
+### Build and Start up
 ```
-make up AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
+make build AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
 ```
 
 Go to `localhost:8082`
 
 You should how see the example DAG and to get started, see the [example dag here](airglue/example/example_glue).
+
+### Start up without building
+It is quicker to start up Airglue without re-building each time
+```
+make up AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
+```
 
 ### Shut down
 ```

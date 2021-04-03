@@ -10,7 +10,7 @@ params: # Params to be loaded and available as {{ params }}
 tasks:
   - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
-    argument_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
+    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       bucket: "cloud-samples-data"
       source_objects:
