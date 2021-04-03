@@ -53,6 +53,10 @@ make logs
 make exec
 ```
 
+## TODO
+- Allow custom Airflow operators don't exist in Airflow to be created and used
+- Add more Operator Factories to support common use cases (i.e. Ingestion from SQL databases with common query templates, etc)
+
 ## Credits
 This application uses Open Source components. You can find the source code of their open source projects along with license information below. We acknowledge and are grateful to these developers for their contributions to open source.
 
