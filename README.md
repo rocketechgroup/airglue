@@ -4,10 +4,10 @@ Writing python code to create Airflow DAGs and link Airflow Operators is very re
 Airglue provides a very simple YAML interface to create DAGs and glue Operators together with no programming required.
 
 ## Design Concept
-See the [example here](airglue/example/example_glue) to get started quickly.
+TBC
 
 ## Getting Started
-The following instructions will get Airglue up and running in Docker 
+The following instructions will get Airglue up and running in Docker.
 
 ### Start up
 ```
@@ -15,6 +15,8 @@ make up AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
 ```
 
 Go to `localhost:8082`
+
+You should how see the example DAG and to get started, see the [example dag here](airglue/example/example_glue).
 
 ### Shut down
 ```
