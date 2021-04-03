@@ -2,6 +2,15 @@
 Writing python code to create Airflow DAGs and link Airflow Operators is very repetitive and not accessible to users don't have a programming background. 
 
 Airglue uses a simple YAML config file to create DAGs and glue Airflow Operators together with no programming required.
+## TOC
+* [Design Concept](#design-concept)
+* [Getting Started](#getting-started)
+   * [Start up](#start-up)
+   * [Shut down](#shut-down)
+   * [Restart](#restart)
+   * [Inspect Container Logs](#inspect-container-logs)
+   * [SSH into the container](#ssh-into-the-container)
+* [Credits](#credits)
 
 ## Design Concept
 TBC
