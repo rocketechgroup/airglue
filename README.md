@@ -1,7 +1,7 @@
 # Airglue
 Writing python code to create Airflow DAGs and link Airflow Operators is very repetitive and not accessible to users don't have a programming background. 
 
-Airglue provides a very simple YAML interface to create DAGs and glue Operators together with no programming required.
+Airglue uses a simple YAML config file to create DAGs and glue Airflow Operators together with no programming required.
 
 ## Design Concept
 TBC
