@@ -15,7 +15,7 @@ tasks:
       bucket: "cloud-samples-data"
       source_objects:
         - "bigquery/us-states/us-states.csv"
-      destination_project_dataset_table: "{{ params.envs.AIRGLUE_GCP_PROJECT_ID }}.{{ params.default_dataset }}.gcs_to_bq_table"
+      destination_project_dataset_table: "{{ params.default_dataset }}.gcs_to_bq_table"
       write_disposition: "WRITE_TRUNCATE"
       source_format: "CSV"
       skip_leading_rows: 1
