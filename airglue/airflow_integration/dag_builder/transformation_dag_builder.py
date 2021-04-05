@@ -132,7 +132,7 @@ def build(**kwargs):
                 continue
             for dependency in task.dependencies:
                 if dependency not in created_operator_tasks:
-                    raise RuntimeError('{}.sql does not exist'.format(dependency))
+                    raise RuntimeError('identifier `{}` does not exist'.format(dependency))
 
                 created_operator_tasks[dependency] >> created_operator_tasks[task.identifier]
 

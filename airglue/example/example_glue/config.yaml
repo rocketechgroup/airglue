@@ -15,7 +15,7 @@ tasks:
       bucket: "cloud-samples-data"
       source_objects:
         - "bigquery/us-states/us-states.csv"
-      destination_project_dataset_table: "{{ params.default_dataset }}.gcs_to_bq_table"
+      destination_project_dataset_table: "{{ params.default_dataset }}.gcs_to_bq_table_us_states_csv"
       write_disposition: "WRITE_TRUNCATE"
       source_format: "CSV"
       skip_leading_rows: 1
@@ -26,5 +26,20 @@ tasks:
         - name: "post_abbr"
           type: "STRING"
           mode: "NULLABLE"
-
+  - identifier: gcs_to_bq_example_us_states_avro
+    operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
+    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
+    arguments:
+      bucket: "cloud-samples-data"
+      source_objects:
+        - "bigquery/us-states/us-states.avro"
+      destination_project_dataset_table: "{{ params.default_dataset }}.gcs_to_bq_table_us_states_avro"
+      write_disposition: "WRITE_TRUNCATE"
+      source_format: "AVRO"
+  - identifier: done
+    operator: airflow.operators.dummy_operator.DummyOperator
+    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
+    dependencies:
+      - gcs_to_bq_example_us_states
+      - gcs_to_bq_example_us_states_avro
 
