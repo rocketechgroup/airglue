@@ -18,6 +18,14 @@ TBC
 ## Getting Started
 The following instructions will get Airglue up and running in Docker.
 
+### Prerequisites
+Create a service account with appropriate roles and save the key to `~/.config/gcloud/airglue/airglue-sandbox-sa.json` on your local machine. 
+
+> The reason service account impersonation is not used is due to there is no support on Airflow V1 to the built-in operators.
+> It is important to rotate the key regularly when using service account keys. 
+> Airflow V2 made this available via the `impersonation_chain` argument. 
+> See https://airflow.apache.org/docs/apache-airflow-providers-google/stable/_api/airflow/providers/google/cloud/operators/bigquery/index.html 
+
 ### Build and Start up
 ```
 make build AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}

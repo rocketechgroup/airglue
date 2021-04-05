@@ -24,7 +24,8 @@ services:
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__LOGGING_LEVEL=INFO
-      - GOOGLE_APPLICATION_CREDENTIALS=/secret/gcp-credentials/application_default_credentials.json
+      - AIRFLOW_CONN_BIGQUERY_DEFAULT=google-cloud-platform://?extra__google_cloud_platform__project=${AIRGLUE_GCP_PROJECT_ID?AIRGLUE_GCP_PROJECT_ID_is_undefined}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secret/gcp-credentials/airglue-sandbox-sa.json
 
       - AIRGLUE_GCP_PROJECT_ID=${AIRGLUE_GCP_PROJECT_ID?AIRGLUE_GCP_PROJECT_ID_is_undefined} # GCP project_id
       - AIRGLUE_SRC_PATH=/opt/airflow/dags
@@ -35,7 +36,7 @@ services:
         max-file: "3"
     volumes:
       - ./airglue:/opt/airflow/dags/airglue
-      - ~/.config/gcloud/application_default_credentials.json:/secret/gcp-credentials/application_default_credentials.json # mount application default credentials only so no keys are used
+      - ~/.config/gcloud/airglue/airglue-sandbox-sa.json:/secret/gcp-credentials/airglue-sandbox-sa.json # mount sandbox service account
     ports:
       - "8082:8080"
     command: webserver
