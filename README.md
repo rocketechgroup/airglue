@@ -4,6 +4,7 @@ Airglue's configuration driven approach makes this easy to manage without needin
 
 ## TOC
 * [Design Concept](#design-concept)
+* [Features](#features)
 * [Getting Started](#getting-started)
    * [Start up](#start-up)
    * [Shut down](#shut-down)
@@ -14,6 +15,11 @@ Airglue's configuration driven approach makes this easy to manage without needin
 
 ## Design Concept
 TBC
+
+## Features
+- User can create DAGs and manage Operator dependencies through a simple YAML file
+- Plug-in enabled architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
+- Environment, Airflow and static variables can all be defined in the YAML and made available through `{{ params }}` ready to be used in the Airflow templating context
 
 ## Getting Started
 The following instructions will get Airglue up and running in Docker.
@@ -62,9 +68,6 @@ make exec
 ```
 
 ## Features
-TBC
-
-## TODO
 - Allow custom Airflow operators don't exist in Airflow to be created and used
 - Add more Operator Factories to support common use cases (i.e. Ingestion from SQL databases with common query templates, etc)
 - Make it support multiple composer versions
