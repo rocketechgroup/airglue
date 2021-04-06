@@ -1,7 +1,7 @@
 # Airglue
-Writing python code to create Airflow DAGs and link Airflow Operators is very repetitive and not accessible to users don't have a programming background. 
+Creating Airflow DAGs and orchestrate dependencies between Operators can be somewhat repetitive and not easy for users without a programming background. 
+Airglue's configuration driven approach makes this easy to manage without needing to write any Python at all.
 
-Airglue uses a simple YAML config file to create DAGs and glue Airflow Operators together with no programming required.
 ## TOC
 * [Design Concept](#design-concept)
 * [Getting Started](#getting-started)
