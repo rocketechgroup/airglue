@@ -14,7 +14,7 @@ services:
         max-file: "3"
 
   webserver:
-    build: infrastructure/docker
+    build: infrastructure/docker/release/${AIRGLUE_COMPOSER_AIRFLOW_VERSION}
     container_name: airglue_webserver
     restart: always
     entrypoint: ./script/entrypoint.sh

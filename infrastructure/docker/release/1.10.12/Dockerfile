@@ -1,4 +1,4 @@
-FROM apache/airflow:1.10.10-2-python3.6
+FROM apache/airflow:1.10.12-python3.6
 LABEL maintainer="Rocketech"
 
 ARG AIRFLOW_HOME=/opt/airflow
@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install dos2unix -y
 USER airflow
 
 # Install composer dependencies & additional required dependencies not included in Composer
-COPY requirements.composer.txt /requirements.composer.txt
-COPY requirements.txt /pre-installed-requirements.txt
+COPY requirements.composer.txt /pre-installed-requirements.txt
 RUN set -ex \
     && pip install --user -r /pre-installed-requirements.txt
 
