@@ -34,7 +34,7 @@ Create a service account with appropriate roles and save the key to `~/.config/g
 
 ### Build and Start up
 ```
-make build AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
+make build
 ```
 
 Go to `localhost:8082`
@@ -44,7 +44,7 @@ You should how see the example DAG and to get started, see the [example dag here
 ### Start up without building
 It is quicker to start up Airglue without re-building each time
 ```
-make up AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
+make up
 ```
 
 ### Shut down
@@ -54,7 +54,7 @@ make down
 
 ### Restart
 ```
-make restart AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID}
+make restart
 ```
 
 ### Inspect Container Logs
@@ -72,11 +72,23 @@ In order to make the setup compatible with [Cloud Composer](https://cloud.google
 There is a default one specified in the `Makefile` which is the latest supported version by Cloud Composer, but it can be overwritten by passing in `AIRGLUE_COMPOSER_AIRFLOW_VERSION` when running any `make` command. 
 I.e. 
 ```
-make build AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID} AIRGLUE_COMPOSER_AIRFLOW_VERSION=1.10.10
+make build AIRGLUE_COMPOSER_AIRFLOW_VERSION=1.10.10
 ```
 
 We aim to align the Airflow support to the latest 3 versions on Cloud Composer. Any older versions will still be available in the repository but will no longer be supported.
 See [Composer versions](https://cloud.google.com/composer/docs/concepts/versioning/composer-versions) to check what are the latest versions.  
+
+### Example DAG
+There is an example DAG created in this repository called [example_glue](airglue/example/example_glue). It is designed to be a `show case` DAG that demos a lot of supported features in Airglue. 
+
+In order for this DAG to work, the `make` command must be executed with the following variables
+- `AIRGLUE_SANDBOX_PROJECT_ID`: A GCP project id for your sandbox environment.
+- `AIRGLUE_EXAMPLE_BUCKET_NAME`: An example GCS bucket used to persist data. The service account must be able to write into this bucket.
+
+And to run the example DAG use something like
+```
+make build AIRGLUE_SANDBOX_PROJECT_ID={replace me} AIRGLUE_EXAMPLE_BUCKET_NAME={replace me}
+``` 
 
 ## Features
 - Allow custom Airflow operators don't exist in Airflow to be created and used
