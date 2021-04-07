@@ -67,6 +67,17 @@ make logs
 make exec
 ```
 
+### Airflow Versions
+In order to make the setup compatible with [Cloud Composer](https://cloud.google.com/composer) as much as possible, we've created a separate release for each Composer version under [Local Docker Release](infrastructure/docker/release). 
+There is a default one specified in the `Makefile` which is the latest supported version by Cloud Composer, but it can be overwritten by passing in `AIRGLUE_COMPOSER_AIRFLOW_VERSION` when running any `make` command. 
+I.e. 
+```
+make build AIRGLUE_GCP_PROJECT_ID={YOUR GCP SANDBOX PROJECT ID} AIRGLUE_COMPOSER_AIRFLOW_VERSION=1.10.10
+```
+
+We aim to align the Airflow support to the latest 3 versions on Cloud Composer. Any older versions will still be available in the repository but will no longer be supported.
+See [Composer versions](https://cloud.google.com/composer/docs/concepts/versioning/composer-versions) to check what are the latest versions.  
+
 ## Features
 - Allow custom Airflow operators don't exist in Airflow to be created and used
 - Add more Operator Factories to support common use cases (i.e. Ingestion from SQL databases with common query templates, etc)
