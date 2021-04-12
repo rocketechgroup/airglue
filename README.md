@@ -31,6 +31,16 @@ TBC
 - Plug-in enabled architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
 - Environment, Airflow and static variables can all be defined in the YAML and made available through `{{ params }}` ready to be used in the Airflow templating context
 
+## Concept
+By defining a YAML config such as the one in [this example] airglue/example/example_glue/config.yaml), you would be able to dynamically create a complex DAG flow like this   
+![Example DAG view](docs/example_dag_graph_view.png)
+
+With powerful templating & rendering   
+![Example DAG templating](docs/example_dag_templating_and_rendering.png)
+
+And producing output to these tables in BigQuery   
+![Example DAG output](docs/example_dag_bq_output.png)
+
 ## Getting Started
 The following instructions will get Airglue up and running in Docker.
 
