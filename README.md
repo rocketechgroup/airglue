@@ -67,7 +67,7 @@ make logs
 make exec
 ```
 
-### Airflow Versions
+### Airflow / Cloud Composer Versions
 In order to make the setup compatible with [Cloud Composer](https://cloud.google.com/composer) as much as possible, we've created a separate release for each Composer version under [Local Docker Release](infrastructure/docker/release). 
 There is a default one specified in the `Makefile` which is the latest supported version by Cloud Composer, but it can be overwritten by passing in `AIRGLUE_COMPOSER_AIRFLOW_VERSION` when running any `make` command. 
 I.e. 
@@ -81,7 +81,6 @@ See [Composer versions](https://cloud.google.com/composer/docs/concepts/versioni
 ## Features
 - Allow custom Airflow operators don't exist in Airflow to be created and used
 - Add more Operator Factories to support common use cases (i.e. Ingestion from SQL databases with common query templates, etc)
-- Make it support multiple composer versions
 - Windows user support
 
 ## Credits
