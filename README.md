@@ -24,7 +24,7 @@ Airglue's configuration driven approach makes this easy to manage without needin
 * [Credits](#credits)
 
 ## Design Concept
-By defining a YAML config such as the one in [this example] airglue/example/example_glue/config.yaml), you would be able to dynamically create a complex DAG flow like this   
+By defining a YAML config such as the one in [this example](airglue/example/example_glue/config.yaml), you would be able to dynamically create a complex DAG flow like this   
 ![Example DAG view](docs/example_dag_graph_view.png)
 
 With powerful templating & rendering   
