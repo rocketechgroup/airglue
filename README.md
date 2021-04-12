@@ -37,19 +37,20 @@ For more details on exactly how this works, see [Example DAG](#example-dag) and 
 
 ## Key Features
 - User can create DAGs and manage Operator dependencies through a simple YAML file
-- Plug-in enabled architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
+- Plugin based architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
 - Environment, Airflow and static variables can all be defined in the YAML and made available through `{{ params }}` ready to be used in the Airflow templating context
 
 ## Getting Started
-The following instructions will get Airglue up and running in Docker.
+The following instructions will get Airglue up and running in Docker on your laptop (Mac or Linux). 
+The whole process should only take around 10-15 minutes depending on your internet connection speed. 
 
 ### Prerequisites
-Create a service account with appropriate roles and save the key to `~/.config/gcloud/airglue/airglue-sandbox-sa.json` on your local machine. 
-
-> The reason service account impersonation is not used is due to there is no support on Airflow V1 to the built-in operators.
-> It is important to rotate the key regularly when using service account keys. 
-> Airflow V2 made this available via the `impersonation_chain` argument. 
-> See https://airflow.apache.org/docs/apache-airflow-providers-google/stable/_api/airflow/providers/google/cloud/operators/bigquery/index.html 
+1) Have [Docker Desktop](https://www.docker.com/products/docker-desktop) installed
+1) Create a service account with appropriate roles and save the key to `~/.config/gcloud/airglue/airglue-sandbox-sa.json` on your local machine. 
+    > The reason service account impersonation is not used is due to there is no support on Airflow V1 to the built-in operators.
+    > It is important to rotate the key regularly when using service account keys. 
+    > Airflow V2 made this available via the `impersonation_chain` argument. 
+    > See https://airflow.apache.org/docs/apache-airflow-providers-google/stable/_api/airflow/providers/google/cloud/operators/bigquery/index.html 
 
 ### Build and Start up
 ```
