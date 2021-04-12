@@ -1,16 +1,15 @@
 enabled: true
 schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
-params: # Params to be loaded and available as {{ params }}
+params:
   default_dataset: airglue_example
-  envs: # Environment variables to be loaded and available as {{ params.envs.<name> }}, undefined ones will be omitted
+  envs:
     - AIRGLUE_SANDBOX_PROJECT_ID
-  vars: # Airflow variables to be loaded and available as {{ params.vars.<name> }}, undefined ones will be omitted
+  vars:
     - example_bucket_name
 tasks:
   - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       bucket: "cloud-samples-data"
       source_objects:
@@ -29,7 +28,6 @@ tasks:
 
   - identifier: gcs_to_bq_example_us_states_avro
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       bucket: "cloud-samples-data"
       source_objects:
@@ -40,7 +38,6 @@ tasks:
 
   - identifier: postgres_to_gcs_airflow_db_dag
     operator: airflow.contrib.operators.postgres_to_gcs_operator.PostgresToGoogleCloudStorageOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       postgres_conn_id: airflow_postgres
       sql: SELECT * FROM dag;
@@ -49,7 +46,6 @@ tasks:
 
   - identifier: gcs_to_bq_airflow_db_dag
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       bucket: "{{ params.vars.example_bucket_name }}"
       source_objects:
@@ -62,7 +58,6 @@ tasks:
 
   - identifier: postgres_to_gcs_airflow_db_log
     operator: airflow.contrib.operators.postgres_to_gcs_operator.PostgresToGoogleCloudStorageOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       postgres_conn_id: airflow_postgres
       sql: SELECT * FROM log WHERE DATE(execution_date) = '{{ ds }}';
@@ -71,7 +66,6 @@ tasks:
 
   - identifier: gcs_to_bq_airflow_db_log
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
       bucket: "{{ params.vars.example_bucket_name }}"
       source_objects:
@@ -84,12 +78,24 @@ tasks:
     dependencies:
       - postgres_to_gcs_airflow_db_log
 
+  - identifier: bq_query_to_table_airflow_dag_info
+    operator: airglue.contrib.operator.bigquery.query_runner.QueryToTable
+    operator_factory: airglue.contrib.operator_factory.sql_file.SqlFileOperatorFactory
+    arguments:
+      sql_file_path: sql/dag_info_from_log.sql
+      destination_dataset_table: "{{ params.default_dataset }}.bq_query_to_table_airflow_dag_info${{ ds_nodash }}"
+      write_disposition: "WRITE_TRUNCATE"
+      time_partitioning:
+        type: DAY
+        field: source_timestamp
+    dependencies:
+      - postgres_to_gcs_airflow_db_log
+
   - identifier: done
     operator: airflow.operators.dummy_operator.DummyOperator
-    operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     dependencies:
       - gcs_to_bq_example_us_states
       - gcs_to_bq_example_us_states_avro
       - gcs_to_bq_airflow_db_dag
-      - gcs_to_bq_airflow_db_log
+      - bq_query_to_table_airflow_dag_info
 
