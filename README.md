@@ -67,6 +67,54 @@ make logs
 make exec
 ```
 
+### Example DAG
+There is an example DAG created in this repository called [example_glue](airglue/example/example_glue). It is designed to be a `show case` DAG that demos a lot of supported features in Airglue. 
+
+In order for this DAG to work, the `make` command must be executed with the following variables
+- `AIRGLUE_SANDBOX_PROJECT_ID`: A GCP project id for your sandbox environment.
+- `AIRGLUE_EXAMPLE_BUCKET_NAME`: An example GCS bucket used to persist data. The service account must be able to write into this bucket.
+
+And to run the example DAG use something like
+```
+make build AIRGLUE_SANDBOX_PROJECT_ID={replace me} AIRGLUE_EXAMPLE_BUCKET_NAME={replace me}
+```
+### DAG Configuration Explained
+#### The following structure is used to define a DAG
+```
+enabled: {optional: true|false. Enable or disable the DAG, default is true if not specified. Disabled DAGs won't show up in the Airflow GUI}
+schedule_interval: {required: a valid CRON expression used to setup DAG schedule, if no schedule is required, set to `null`. i.e. "0 2 * * *" or null. You may use https://crontab.guru/ to validate your CRON expression}
+timezone: {required: timezone for the schedule. I.e. "Europe/London". Local time is always preferred so that processing can be done exactly at the right time for the correct data boundaries}
+params: {optional: params to be loaded and made available as {{ params }} in any context in Airflow with Jinja templating enabled. 3 types of params can be loaded}
+  default_dataset: airglue_example # This is a static param type which will be made available directly under {{ params }}. i.e. {{ params.default_dataset }}
+  envs: # This is for Environment variables and the ones defined will be made available as {{ params.envs.<name> }}, undefined ones will be omitted
+    - AIRGLUE_SANDBOX_PROJECT_ID
+  vars: # This is for Airflow variables and the ones defined will be made available as {{ params.vars.<name> }}, undefined ones will be omitted
+    - example_bucket_name
+```
+To to the [Example DAG](airglue/example/example_glue) to see a working version of this.
+
+#### The following structure is used to define a task within a DAG
+```
+- identifier: {required: identifier for the task, must be unique within a DAG}
+  operator: {required: fully qualified airflow operator name, i.e. airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator}
+  operator_factory: {optional: fully qualified operator factory name, i.e. airglue.contrib.operator_factory.default.DefaultOperatorFactory, but if `DefaultOperatorFactory` is all that is required, this arguments can be omitted}
+  arguments:
+    {optional: key value pairs translated into Airflow Operator arguments. i.e. source_format: "NEWLINE_DELIMITED_JSON"} 
+  dependencies:
+    {optional: a list of task identifiers this task depends on, used to create the link between Airflow Operators within a DAG}
+```
+To to the [Example DAG](airglue/example/example_glue) to see a working version of this.
+
+### Custom Operator
+Under [airglue/contrib/operator](airglue/contrib/operator), custom Airflow Operators can be defined if Airflow does not have one to fulfill the requirements or you simply prefer to write your own so that there is no limit to what Airglue can execute.
+
+See  [airglue/contrib/operator/bigquery/query_runner.py](airglue/contrib/operator/bigquery/query_runner.py) as an example.
+
+### Operator Factory
+Operator Factory is a concept introduced to make the configuration file more compact and easier to read, it can also be used to define common abstractions so that the configuration file becomes smaller hence much quicker to add new integrations.
+
+Operator Factories can be added to [airglue/contrib/operator_factory](airglue/contrib/operator_factory) and by default the [default](airglue/contrib/operator_factory/default.py) Operator Factory is used.
+
 ### Airflow / Cloud Composer Versions
 In order to make the setup compatible with [Cloud Composer](https://cloud.google.com/composer) as much as possible, we've created a separate release for each Composer version under [Local Docker Release](infrastructure/docker/release). 
 There is a default one specified in the `Makefile` which is the latest supported version by Cloud Composer, but it can be overwritten by passing in `AIRGLUE_COMPOSER_AIRFLOW_VERSION` when running any `make` command. 
@@ -78,21 +126,7 @@ make build AIRGLUE_COMPOSER_AIRFLOW_VERSION=1.10.10
 We aim to align the Airflow support to the latest 3 versions on Cloud Composer. Any older versions will still be available in the repository but will no longer be supported.
 See [Composer versions](https://cloud.google.com/composer/docs/concepts/versioning/composer-versions) to check what are the latest versions.  
 
-### Example DAG
-There is an example DAG created in this repository called [example_glue](airglue/example/example_glue). It is designed to be a `show case` DAG that demos a lot of supported features in Airglue. 
-
-In order for this DAG to work, the `make` command must be executed with the following variables
-- `AIRGLUE_SANDBOX_PROJECT_ID`: A GCP project id for your sandbox environment.
-- `AIRGLUE_EXAMPLE_BUCKET_NAME`: An example GCS bucket used to persist data. The service account must be able to write into this bucket.
-
-And to run the example DAG use something like
-```
-make build AIRGLUE_SANDBOX_PROJECT_ID={replace me} AIRGLUE_EXAMPLE_BUCKET_NAME={replace me}
-``` 
-
-## Features
-- Allow custom Airflow operators don't exist in Airflow to be created and used
-- Add more Operator Factories to support common use cases (i.e. Ingestion from SQL databases with common query templates, etc)
+## TODO
 - Windows user support
 
 ## Credits

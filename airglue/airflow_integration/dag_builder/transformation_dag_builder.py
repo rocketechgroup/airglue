@@ -64,7 +64,7 @@ def dag_config_to_params(dag_config: schema.DagConfig):
     return params
 
 
-def create_operator(dag, params: dict, task: schema.Task):
+def create_operator(dag, dag_config_path, params: dict, task: schema.Task):
     operator_factory_class = locate(task.operator_factory)
     operator_class = locate(task.operator)
 
@@ -76,6 +76,7 @@ def create_operator(dag, params: dict, task: schema.Task):
 
     return operator_factory_class.create(
         operator=operator_class,
+        dag_config_path=dag_config_path,
         dag=dag,
         task_id=task.identifier,
         params=params,
@@ -124,7 +125,7 @@ def build(**kwargs):
 
         for task in dag_config.tasks:
             logging.debug(f'### task: {task.__dict__}')
-            operator = create_operator(dag=dag, params=params, task=task)
+            operator = create_operator(dag=dag, dag_config_path=dag_config_path, params=params, task=task)
             created_operator_tasks[task.identifier] = operator
 
         for task in dag_config.tasks:
