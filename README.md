@@ -1,5 +1,5 @@
 # Airglue
-Creating Airflow DAGs and orchestrate dependencies between Operators can be somewhat repetitive and not easy for users without a programming background. 
+Create Airflow DAGs and orchestrate dependencies between Operators can be somewhat repetitive and not easy for users without a programming background. 
 Airglue's configuration driven approach makes this easy to manage without needing to write any Python at all.
 
 ## TOC
