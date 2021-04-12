@@ -4,7 +4,7 @@ Airglue's configuration driven approach makes this easy to manage without needin
 
 ## TOC
 * [Design Concept](#design-concept)
-* [Features](#features)
+* [Key Features](#key-features)
 * [Getting Started](#getting-started)
    * [Prerequisites](#prerequisites)
    * [Build and Start up](#build-and-start-up)
@@ -24,14 +24,6 @@ Airglue's configuration driven approach makes this easy to manage without needin
 * [Credits](#credits)
 
 ## Design Concept
-TBC
-
-## Features
-- User can create DAGs and manage Operator dependencies through a simple YAML file
-- Plug-in enabled architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
-- Environment, Airflow and static variables can all be defined in the YAML and made available through `{{ params }}` ready to be used in the Airflow templating context
-
-## Concept
 By defining a YAML config such as the one in [this example] airglue/example/example_glue/config.yaml), you would be able to dynamically create a complex DAG flow like this   
 ![Example DAG view](docs/example_dag_graph_view.png)
 
@@ -40,6 +32,13 @@ With powerful templating & rendering
 
 And producing output to these tables in BigQuery   
 ![Example DAG output](docs/example_dag_bq_output.png)
+
+For more details on exactly how this works, see [Example DAG](#example-dag) and [DAG Configuration Explained](#dag-configuration-explained)
+
+## Key Features
+- User can create DAGs and manage Operator dependencies through a simple YAML file
+- Plug-in enabled architecture allows components such as custom Operators and Operator Factory classes to be added which helps eliminate most duplication
+- Environment, Airflow and static variables can all be defined in the YAML and made available through `{{ params }}` ready to be used in the Airflow templating context
 
 ## Getting Started
 The following instructions will get Airglue up and running in Docker.
