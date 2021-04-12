@@ -29,7 +29,7 @@ services:
       - AIRGLUE_SRC_PATH=/opt/airflow/dags
       - AIRGLUE_CONFIG_PATH=/opt/airflow/dags/airglue/example # Example config path
       # Example DAG
-      - AIRFLOW_CONN_BIGQUERY_DEFAULT=google-cloud-platform://?extra__google_cloud_platform__project=${AIRGLUE_SANDBOX_PROJECT_ID?AIRGLUE_SANDBOX_PROJECT_ID_is_undefined}
+      - AIRFLOW_CONN_BIGQUERY_DEFAULT=google-cloud-platform://?extra__google_cloud_platform__project=${AIRGLUE_SANDBOX_PROJECT_ID}
       - AIRFLOW_CONN_AIRFLOW_POSTGRES=postgres://airflow:airflow@postgres:5432/airflow
       - AIRFLOW_VAR_EXAMPLE_BUCKET_NAME=${AIRGLUE_EXAMPLE_BUCKET_NAME}
       - AIRGLUE_SANDBOX_PROJECT_ID=${AIRGLUE_SANDBOX_PROJECT_ID}
