@@ -1,0 +1,6 @@
+enabled: true
+schedule_interval: "0 2 * * *"
+timezone: "Europe/London"
+tasks:
+  - identifier: waiting_for_external_dag_to_complete
+    operator: airflow.operators.dummy_operator.DummyOperator

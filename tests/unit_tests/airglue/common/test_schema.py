@@ -7,8 +7,10 @@ def test_schema_is_valid_without_vars():
 enabled: true
 schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
+description: This is my example DAG
 tasks:
   - identifier: example_gcs_to_bq
+    description: My example task
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     operator_factory: airglue.contrib.operator_factory.default.DefaultOperatorFactory
     arguments:
@@ -22,6 +24,7 @@ tasks:
     assert dag_config.enabled
     assert dag_config.schedule_interval == '0 2 * * *'
     assert dag_config.timezone == 'Europe/London'
+    assert dag_config.description == 'This is my example DAG'
     assert len(dag_config.tasks) == 1
 
     first_task = dag_config.tasks.pop()
@@ -33,6 +36,7 @@ tasks:
         'source_objects': "bigquery/us-states/us-states.csv",
         'destination_project_dataset_table': "airglue_example.gcs_to_bq_table"
     }
+    assert first_task.description == 'My example task'
 
 
 def test_schema_is_valid_with_vars():

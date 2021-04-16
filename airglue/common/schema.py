@@ -27,6 +27,7 @@ class Task:
     def __init__(
             self,
             identifier: str,
+            description: str,
             operator,
             operator_factory: str,
             arguments: Dict,
@@ -35,12 +36,14 @@ class Task:
     ):
         """
         @param identifier: Task Identifier
+        @param description: Task Description
         @param operator: str representation of any class derived from airflow.models.baseoperator.BaseOperator
         @param operator_factory: str representation of any class derived from airglue.contrib.operator_factory.default.OperatorFactory
         @param arguments: a dict of arguments used by the argument factory class
         @param dependencies: an optional list of dependencies for this task
         """
         self.identifier = identifier
+        self.description = description
         self.operator = operator
         self.operator_factory = operator_factory
         self.arguments = arguments
@@ -49,6 +52,7 @@ class Task:
 
 class TaskSchema(Schema):
     identifier = fields.Str(required=True)
+    description = fields.Str(required=False, missing='')
     operator = fields.Str(
         required=True
     )
@@ -73,6 +77,7 @@ class DagConfig:
             enabled: bool,
             schedule_interval: str,
             timezone: str,
+            description: str,
             params: Dict,
             envs: List,
             vars: List,
@@ -81,6 +86,7 @@ class DagConfig:
         self.enabled = enabled
         self.schedule_interval = schedule_interval
         self.timezone = timezone
+        self.description = description
         self.params = params
         self.envs = envs
         self.vars = vars
@@ -91,6 +97,7 @@ class DagConfigSchema(Schema):
     enabled = fields.Bool(required=False, missing=True)
     schedule_interval = fields.Str(validate=IsValidCron(), missing=None)
     timezone = fields.Str(required=True)
+    description = fields.Str(required=False, missing='')
     params = fields.Dict(required=False, missing={})
     envs = fields.List(cls_or_instance=fields.Str(), required=False, missing=[])
     vars = fields.List(cls_or_instance=fields.Str(), required=False, missing=[])
