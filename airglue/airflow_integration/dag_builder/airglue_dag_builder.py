@@ -119,6 +119,8 @@ def build(**kwargs):
             template_searchpath=[dag_config_path],
         )
 
+        dag.doc_md = dag_config.description
+
         globals()[dag_id] = dag
         dags.append({'dag_id': dag_id, 'dag': dag})
 
@@ -128,6 +130,7 @@ def build(**kwargs):
             logging.debug(f'### task: {task.__dict__}')
             operator = create_operator(dag=dag, dag_config_path=dag_config_path, params=params, task=task)
             created_operator_tasks[task.identifier] = operator
+            operator.doc_md = task.description
 
         for task in dag_config.tasks:
             if len(task.dependencies) == 0:

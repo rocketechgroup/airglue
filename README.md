@@ -104,6 +104,7 @@ make build AIRGLUE_SANDBOX_PROJECT_ID={replace me} AIRGLUE_EXAMPLE_BUCKET_NAME={
 enabled: { optional<true|false>. Enable or disable the DAG, default is true if not specified. Disabled DAGs won't show up in the Airflow GUI }
 schedule_interval: { required<cron expression>. A valid CRON expression used to setup DAG schedule, if no schedule is required, set to `null`. i.e. "0 2 * * *" or null. You may use https://crontab.guru/ to validate your CRON expression }
 timezone: { required<timezone>. Timezone for the schedule. I.e. "Europe/London". Local time is always preferred so that processing can be done exactly at the right time for the correct data boundaries }
+description: { optional<string with markdown support>. A description for the DAG }
 params: { optional<key:value>. Static key value pairs to be loaded and made available as {{ params }} in any context in Airflow with Jinja templating enabled }
 # i.e. 
 # default_dataset: airglue_example can be referenced by {{ params.default_dataset }}
@@ -125,6 +126,7 @@ To to the [Example DAG](airglue/example/example_glue) to see a working version o
   operator_factory: { optional<string>. Fully qualified operator factory name, i.e. airglue.contrib.operator_factory.default.DefaultOperatorFactory, but if `DefaultOperatorFactory` is all that is required, this arguments can be omitted }
   arguments: { optional<key:value>. Key value pairs translated into Airflow Operator arguments. }
   # i.e. source_format: "NEWLINE_DELIMITED_JSON" 
+  description: { optional<string with markdown support>. A description for the task }
   dependencies: { optional<list>. A list of task identifiers this task depends on, used to create the link between Airflow Operators within a DAG }
   # i.e. 
   # - task_identifier_1

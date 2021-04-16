@@ -1,6 +1,7 @@
 enabled: true
 schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
+description: "## This is my example DAG"
 params:
   default_dataset: airglue_example
 envs:
@@ -8,6 +9,12 @@ envs:
 vars:
   - example_bucket_name
 tasks:
+  - identifier: waiting_for_external_dag_to_complete
+    operator: airflow.sensors.external_task_sensor.ExternalTaskSensor
+    arguments:
+      external_dag_id: airglue__example_upstream_dependency
+      check_existence: true
+
   - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     arguments:
@@ -25,6 +32,8 @@ tasks:
         - name: "post_abbr"
           type: "STRING"
           mode: "NULLABLE"
+    dependencies:
+      - waiting_for_external_dag_to_complete
 
   - identifier: gcs_to_bq_example_us_states_avro
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
@@ -35,6 +44,8 @@ tasks:
       destination_project_dataset_table: "{{ params.default_dataset }}.gcs_to_bq_table_us_states_avro"
       write_disposition: "WRITE_TRUNCATE"
       source_format: "AVRO"
+    dependencies:
+      - waiting_for_external_dag_to_complete
 
   - identifier: postgres_to_gcs_airflow_db_dag
     operator: airflow.contrib.operators.postgres_to_gcs_operator.PostgresToGoogleCloudStorageOperator
@@ -43,6 +54,8 @@ tasks:
       sql: SELECT * FROM dag;
       filename: postgres_to_gcs_airflow_db_dag/{{ ds }}/dag_{}
       bucket: "{{ params.vars.example_bucket_name }}"
+    dependencies:
+      - waiting_for_external_dag_to_complete
 
   - identifier: gcs_to_bq_airflow_db_dag
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
@@ -91,6 +104,13 @@ tasks:
     dependencies:
       - postgres_to_gcs_airflow_db_log
 
+  - identifier: run_example_python_function
+    description: "This task shows how to call an pre defined python function using a Operator Factory"
+    operator: airflow.operators.python_operator.PythonOperator
+    operator_factory: airglue.contrib.operator_factory.python.PythonOperatorFactory
+    arguments:
+      python_callable: example_python_function
+
   - identifier: done
     operator: airflow.operators.dummy_operator.DummyOperator
     dependencies:
@@ -98,4 +118,5 @@ tasks:
       - gcs_to_bq_example_us_states_avro
       - gcs_to_bq_airflow_db_dag
       - bq_query_to_table_airflow_dag_info
+      - run_example_python_function
 
