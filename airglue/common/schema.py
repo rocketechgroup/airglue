@@ -74,12 +74,16 @@ class DagConfig:
             schedule_interval: str,
             timezone: str,
             params: Dict,
+            envs: List,
+            vars: List,
             tasks: List[Task]
     ):
         self.enabled = enabled
         self.schedule_interval = schedule_interval
         self.timezone = timezone
         self.params = params
+        self.envs = envs
+        self.vars = vars
         self.tasks = tasks
 
 
@@ -88,6 +92,8 @@ class DagConfigSchema(Schema):
     schedule_interval = fields.Str(validate=IsValidCron(), missing=None)
     timezone = fields.Str(required=True)
     params = fields.Dict(required=False, missing={})
+    envs = fields.List(cls_or_instance=fields.Str(), required=False, missing=[])
+    vars = fields.List(cls_or_instance=fields.Str(), required=False, missing=[])
     tasks = fields.List(cls_or_instance=fields.Nested(TaskSchema), required=True)
 
     @post_load
