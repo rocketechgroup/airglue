@@ -44,8 +44,9 @@ def init_config(config_path, config_extension='yaml') -> List[Dict[str, Any]]:
 
 def dag_config_to_params(dag_config: schema.DagConfig):
     params = {'envs': {}, 'vars': {}}
-    envs = dag_config.params.get('envs') if dag_config.params.get('envs') else []
-    vars = dag_config.params.get('vars') if dag_config.params.get('vars') else []
+    envs = dag_config.envs if dag_config.envs else []
+    vars = dag_config.vars if dag_config.vars else []
+
     for env in envs:
         params['envs'][env] = os.environ.get(env)
 

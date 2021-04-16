@@ -42,11 +42,11 @@ schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
 params:
   default_dataset: airglue_example
-  envs: 
-    - AIRGLUE_GCP_PROJECT_ID
-    - AIRGLUE_GCP_REGION
-  vars:
-    - example_bucket_name
+envs: 
+  - AIRGLUE_GCP_PROJECT_ID
+  - AIRGLUE_GCP_REGION
+vars:
+  - example_bucket_name
 tasks:
   - identifier: x
     operator: x
@@ -58,7 +58,7 @@ tasks:
     assert dag_config.enabled
     assert dag_config.schedule_interval == '0 2 * * *'
     assert dag_config.timezone == 'Europe/London'
-    assert dag_config.params['envs'] == ['AIRGLUE_GCP_PROJECT_ID', 'AIRGLUE_GCP_REGION']
-    assert dag_config.params['vars'] == ['example_bucket_name']
+    assert dag_config.envs == ['AIRGLUE_GCP_PROJECT_ID', 'AIRGLUE_GCP_REGION']
+    assert dag_config.vars == ['example_bucket_name']
     assert dag_config.params['default_dataset'] == 'airglue_example'
     assert len(dag_config.tasks) == 1

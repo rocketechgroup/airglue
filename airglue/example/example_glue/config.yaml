@@ -3,10 +3,10 @@ schedule_interval: "0 2 * * *"
 timezone: "Europe/London"
 params:
   default_dataset: airglue_example
-  envs:
-    - AIRGLUE_SANDBOX_PROJECT_ID
-  vars:
-    - example_bucket_name
+envs:
+  - AIRGLUE_SANDBOX_PROJECT_ID
+vars:
+  - example_bucket_name
 tasks:
   - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator

@@ -101,27 +101,34 @@ make build AIRGLUE_SANDBOX_PROJECT_ID={replace me} AIRGLUE_EXAMPLE_BUCKET_NAME={
 ### DAG Configuration Explained
 #### The following structure is used to define a DAG
 ```yaml
-enabled: {optional: true|false. Enable or disable the DAG, default is true if not specified. Disabled DAGs won't show up in the Airflow GUI}
-schedule_interval: {required: a valid CRON expression used to setup DAG schedule, if no schedule is required, set to `null`. i.e. "0 2 * * *" or null. You may use https://crontab.guru/ to validate your CRON expression}
-timezone: {required: timezone for the schedule. I.e. "Europe/London". Local time is always preferred so that processing can be done exactly at the right time for the correct data boundaries}
-params: {optional: params to be loaded and made available as {{ params }} in any context in Airflow with Jinja templating enabled. 3 types of params can be loaded}
-  default_dataset: airglue_example # This is a static param type which will be made available directly under {{ params }}. i.e. {{ params.default_dataset }}
-  envs: # This is for Environment variables and the ones defined will be made available as {{ params.envs.<name> }}, undefined ones will be omitted
-    - AIRGLUE_SANDBOX_PROJECT_ID
-  vars: # This is for Airflow variables and the ones defined will be made available as {{ params.vars.<name> }}, undefined ones will be omitted
-    - example_bucket_name
+enabled: { optional<true|false>. Enable or disable the DAG, default is true if not specified. Disabled DAGs won't show up in the Airflow GUI }
+schedule_interval: { required<cron expression>. A valid CRON expression used to setup DAG schedule, if no schedule is required, set to `null`. i.e. "0 2 * * *" or null. You may use https://crontab.guru/ to validate your CRON expression }
+timezone: { required<timezone>. Timezone for the schedule. I.e. "Europe/London". Local time is always preferred so that processing can be done exactly at the right time for the correct data boundaries }
+params: { optional<key:value>. Static key value pairs to be loaded and made available as {{ params }} in any context in Airflow with Jinja templating enabled }
+# i.e. 
+# default_dataset: airglue_example can be referenced by {{ params.default_dataset }}
+
+envs: { optional<list>. A list of environment variables to be loaded and made available as {{ params.envs.<name> }}, undefined ones will be omitted }
+# i.e. the following can be referenced by {{ params.envs.AIRGLUE_SANDBOX_PROJECT_ID }}
+# - AIRGLUE_SANDBOX_PROJECT_ID
+
+vars: { optional<list>. It is possible to access airflow variables by using {{ var.value.get('my.var', 'fallback') }}, but you can also make them available under {{ params.vars.<name> }} to be more explicit for the DAG by defining them here, undefined ones will be omitted }
+# i.e. the following can be referenced by {{ params.vars.example_bucket_name }}
+# - example_bucket_name
 ```
 To to the [Example DAG](airglue/example/example_glue) to see a working version of this.
 
 #### The following structure is used to define a task within a DAG
 ```yaml
-- identifier: {required: identifier for the task, must be unique within a DAG}
-  operator: {required: fully qualified airflow operator name, i.e. airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator}
-  operator_factory: {optional: fully qualified operator factory name, i.e. airglue.contrib.operator_factory.default.DefaultOperatorFactory, but if `DefaultOperatorFactory` is all that is required, this arguments can be omitted}
-  arguments:
-    {optional: key value pairs translated into Airflow Operator arguments. i.e. source_format: "NEWLINE_DELIMITED_JSON"} 
-  dependencies:
-    {optional: a list of task identifiers this task depends on, used to create the link between Airflow Operators within a DAG}
+- identifier: { required<string>. Identifier for the task, must be unique within a DAG }
+  operator: { required<string>. Fully qualified airflow operator name, i.e. airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator }
+  operator_factory: { optional<string>. Fully qualified operator factory name, i.e. airglue.contrib.operator_factory.default.DefaultOperatorFactory, but if `DefaultOperatorFactory` is all that is required, this arguments can be omitted }
+  arguments: { optional<key:value>. Key value pairs translated into Airflow Operator arguments. }
+  # i.e. source_format: "NEWLINE_DELIMITED_JSON" 
+  dependencies: { optional<list>. A list of task identifiers this task depends on, used to create the link between Airflow Operators within a DAG }
+  # i.e. 
+  # - task_identifier_1
+  # - task_identifier_2
 ```
 To to the [Example DAG](airglue/example/example_glue) to see a working version of this.
 
