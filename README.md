@@ -158,6 +158,20 @@ See [Composer versions](https://cloud.google.com/composer/docs/concepts/versioni
 ## TODO
 - Windows user support
 
+## Additional Examples
+### Example Dataflow Runner
+This example shows how to run a Batch Java Dataflow job using a dedicated DataFlow controller service account.    
+To use the [Example Dataflow Runner](airglue/example/example_dataflow_runner), 
+
+1. Create the `dataflow-controller` service account and assign the following roles, see more about controller service account [here](https://cloud.google.com/dataflow/docs/concepts/security-and-permissions#controller_service_account)
+    - Project level: Dataflow Admin
+    - Project level: Dataflow Worker
+    - Bucket Level: Storage Object Admin
+1. Grant the `airglue` service account the following roles
+    - Project level: Dataflow Admin
+    - Service Account Level: Allow the `airglue` service account to `act as `dataflow-controller` by granting it the `Service Account User` role. 
+1. Upload the bundled jar to `gs://{{ params.vars.AIRGLUE_EXAMPLE_BUCKET_NAME }}/jars/`
+
 ## Credits
 This application uses Open Source components. You can find the source code of their open source projects along with license information below. We acknowledge and are grateful to these developers for their contributions to open source.
 

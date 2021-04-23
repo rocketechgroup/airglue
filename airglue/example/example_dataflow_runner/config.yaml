@@ -1,0 +1,23 @@
+enabled: true
+schedule_interval: "0 2 * * *"
+timezone: "Europe/London"
+envs:
+  - AIRGLUE_SANDBOX_PROJECT_ID
+vars:
+  - example_bucket_name
+tasks:
+  - identifier: run_word_count
+    operator: airflow.contrib.operators.dataflow_operator.DataFlowJavaOperator
+    arguments:
+      jar: "gs://{{ params.vars.example_bucket_name }}/jars/hello-beam-1.0-SNAPSHOT-all.jar"
+      options:
+        input: gs://apache-beam-samples/shakespeare/1kinghenry*
+        output: "gs://{{ params.vars.example_bucket_name }}/output/minimal_word_count/"
+        tempLocation: "gs://{{ params.vars.example_bucket_name }}/tmp/"
+        project: "{{ params.envs.AIRGLUE_SANDBOX_PROJECT_ID }}"
+        zone: us-central1-f
+        stagingLocation: "gs://{{ params.vars.example_bucket_name }}/staging/"
+        numWorkers: "1"
+        maxNumWorkers: "2"
+        workerMachineType: n1-standard-1
+        serviceAccount: "dataflow-controller@{{ params.envs.AIRGLUE_SANDBOX_PROJECT_ID }}.iam.gserviceaccount.com"

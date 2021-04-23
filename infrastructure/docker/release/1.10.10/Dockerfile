@@ -5,8 +5,13 @@ ARG AIRFLOW_HOME=/opt/airflow
 ENV AIRFLOW_HOME=${AIRFLOW_HOME}
 
 USER root
-# Install dos2unix
-RUN apt-get update && apt-get install dos2unix -y
+
+RUN apt-get update && apt-get install dos2unix wget -y && apt-get install software-properties-common -y
+
+# Install java 8
+RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+RUN apt-get update && apt-get install adoptopenjdk-8-hotspot -y
 
 USER airflow
 
