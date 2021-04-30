@@ -19,28 +19,31 @@ services:
     restart: always
     entrypoint: ./script/entrypoint.sh
     depends_on:
-        - postgres
+      - postgres
     environment:
-      # Airflow
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__LOGGING_LEVEL=INFO
+      # Airflow override
+      AIRFLOW__SECRETS__BACKEND: "airflow.providers.google.cloud.secrets.secret_manager.CloudSecretManagerBackend"
+      AIRFLOW__SECRETS__BACKEND_KWARGS: '{"project_id": "${AIRGLUE_SANDBOX_PROJECT_ID}"}'
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres/airflow"
+      AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+      AIRFLOW__CORE__LOGGING_LEVEL: "INFO"
+
       # Airglue specific
-      - AIRGLUE_SRC_PATH=/opt/airflow/dags
-      - AIRGLUE_CONFIG_PATH=/opt/airflow/dags/airglue/example # Example config path
+      AIRGLUE_SRC_PATH: "/opt/airflow/dags"
+      AIRGLUE_CONFIG_PATH: "/opt/airflow/dags/airglue/example" # Example config path
+
       # Example DAG
-      - AIRFLOW_CONN_BIGQUERY_DEFAULT=google-cloud-platform://?extra__google_cloud_platform__project=${AIRGLUE_SANDBOX_PROJECT_ID}
-      - AIRFLOW_CONN_AIRFLOW_POSTGRES=postgres://airflow:airflow@postgres:5432/airflow
-      - AIRFLOW_VAR_EXAMPLE_BUCKET_NAME=${AIRGLUE_EXAMPLE_BUCKET_NAME}
-      - AIRGLUE_SANDBOX_PROJECT_ID=${AIRGLUE_SANDBOX_PROJECT_ID}
-      - GOOGLE_APPLICATION_CREDENTIALS=/secret/gcp-credentials/airglue-sandbox-sa.json
+      AIRFLOW_CONN_AIRFLOW_POSTGRES: "postgres://airflow:airflow@postgres:5432/airflow"
+      AIRFLOW_VAR_EXAMPLE_BUCKET_NAME: "${AIRGLUE_EXAMPLE_BUCKET_NAME}"
+      AIRGLUE_SANDBOX_PROJECT_ID: "${AIRGLUE_SANDBOX_PROJECT_ID}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/secret/gcp-credentials/application_default_credentials.json"
     logging:
       options:
         max-size: 10m
         max-file: "3"
     volumes:
       - ./airglue:/opt/airflow/dags/airglue
-      - ~/.config/gcloud/airglue/airglue-sandbox-sa.json:/secret/gcp-credentials/airglue-sandbox-sa.json # mount sandbox service account
+      - ~/.config/gcloud/application_default_credentials.json:/secret/gcp-credentials/application_default_credentials.json # mount sandbox user account
     ports:
       - "8082:8080"
     command: webserver

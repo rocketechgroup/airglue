@@ -18,6 +18,8 @@ tasks:
   - identifier: gcs_to_bq_example_us_states
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     arguments:
+      bigquery_conn_id: gcp_airglue
+      google_cloud_storage_conn_id: gcp_airglue
       bucket: "cloud-samples-data"
       source_objects:
         - "bigquery/us-states/us-states.csv"
@@ -38,6 +40,8 @@ tasks:
   - identifier: gcs_to_bq_example_us_states_avro
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     arguments:
+      bigquery_conn_id: gcp_airglue
+      google_cloud_storage_conn_id: gcp_airglue
       bucket: "cloud-samples-data"
       source_objects:
         - "bigquery/us-states/us-states.avro"
@@ -51,6 +55,7 @@ tasks:
     operator: airflow.contrib.operators.postgres_to_gcs_operator.PostgresToGoogleCloudStorageOperator
     arguments:
       postgres_conn_id: airflow_postgres
+      google_cloud_storage_conn_id: gcp_airglue
       sql: SELECT * FROM dag;
       filename: postgres_to_gcs_airflow_db_dag/{{ ds }}/dag_{}
       bucket: "{{ params.vars.example_bucket_name }}"
@@ -60,6 +65,8 @@ tasks:
   - identifier: gcs_to_bq_airflow_db_dag
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     arguments:
+      bigquery_conn_id: gcp_airglue
+      google_cloud_storage_conn_id: gcp_airglue
       bucket: "{{ params.vars.example_bucket_name }}"
       source_objects:
         - "postgres_to_gcs_airflow_db_dag/{{ ds }}/dag_*"
@@ -73,6 +80,7 @@ tasks:
     operator: airflow.contrib.operators.postgres_to_gcs_operator.PostgresToGoogleCloudStorageOperator
     arguments:
       postgres_conn_id: airflow_postgres
+      google_cloud_storage_conn_id: gcp_airglue
       sql: SELECT * FROM log WHERE DATE(execution_date) = '{{ ds }}';
       filename: postgres_to_gcs_airflow_db_log/{{ ds }}/log_{}
       bucket: "{{ params.vars.example_bucket_name }}"
@@ -80,6 +88,8 @@ tasks:
   - identifier: gcs_to_bq_airflow_db_log
     operator: airflow.contrib.operators.gcs_to_bq.GoogleCloudStorageToBigQueryOperator
     arguments:
+      bigquery_conn_id: gcp_airglue
+      google_cloud_storage_conn_id: gcp_airglue
       bucket: "{{ params.vars.example_bucket_name }}"
       source_objects:
         - "postgres_to_gcs_airflow_db_log/{{ ds }}/log_*"
@@ -95,6 +105,7 @@ tasks:
     operator: airglue.contrib.operator.bigquery.query_runner.QueryToTable
     operator_factory: airglue.contrib.operator_factory.sql_file.SqlFileOperatorFactory
     arguments:
+      bigquery_conn_id: gcp_airglue
       sql_file_path: sql/dag_info_from_log.sql
       destination_dataset_table: "{{ params.default_dataset }}.bq_query_to_table_airflow_dag_info${{ ds_nodash }}"
       write_disposition: "WRITE_TRUNCATE"
