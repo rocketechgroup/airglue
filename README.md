@@ -158,9 +158,9 @@ Operator Factories can be added to [airglue/contrib/operator_factory](airglue/co
 > Important: your user group must have been given the `Secret Manager Secret Accessor` role in order to access the secret   
 
 There are situations when using a secret (i.e. in Airflow Connections or Variables) is not avoidable. Airglue uses [Secret Manager](https://cloud.google.com/secret-manager) as the secret backend so that you do not have to store any credentials (such as service account keys) inside Airflow / Cloud Composer. 
-This makes storing secret more secure and easy to manager. For example, you can setup key rotation automation and it only has to be done in one place which is secret manager. 
+This makes storing secret more secure and easy to manage. For example, you can setup key rotation automation and it only has to be done in one place which is secret manager. 
 
-The Secret Manager Backend can be enabled by overwriting the following Airflow environment variables
+The Secret Manager Backend can be enabled by supplying the following Airflow environment variables
 ```
 AIRFLOW__SECRETS__BACKEND: "airflow.providers.google.cloud.secrets.secret_manager.CloudSecretManagerBackend"
 AIRFLOW__SECRETS__BACKEND_KWARGS: '{"project_id": "${AIRGLUE_SANDBOX_PROJECT_ID}", ...}'
