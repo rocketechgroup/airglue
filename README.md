@@ -19,8 +19,11 @@ Airglue's configuration driven approach makes this easy to manage without needin
       * [The following structure is used to define a task within a DAG](#the-following-structure-is-used-to-define-a-task-within-a-dag)
    * [Custom Operator](#custom-operator)
    * [Operator Factory](#operator-factory)
+   * [The Secret Manager Backend](#the-secret-manager-backend)
    * [Airflow / Cloud Composer Versions](#airflow--cloud-composer-versions)
 * [TODO](#todo)
+* [Additional Examples](#additional-examples)
+   * [Example Dataflow Runner](#example-dataflow-runner)
 * [Credits](#credits)
 
 ## Design Concept
@@ -46,11 +49,13 @@ The whole process should only take around 10-15 minutes depending on your intern
 
 ### Prerequisites
 1) Have [Docker Desktop](https://www.docker.com/products/docker-desktop) installed
-1) Create a service account with appropriate roles and save the key to `~/.config/gcloud/airglue/airglue-sandbox-sa.json` on your local machine. 
-    > The reason service account impersonation is not used is due to there is no support on Airflow V1 to the built-in operators.
-    > It is important to rotate the key regularly when using service account keys. 
-    > Airflow V2 made this available via the `impersonation_chain` argument. 
-    > See https://airflow.apache.org/docs/apache-airflow-providers-google/stable/_api/airflow/providers/google/cloud/operators/bigquery/index.html 
+1) Have the [gcloud sdk](https://cloud.google.com/sdk/docs/install) installed
+1) Have a GCP [default application credential](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) generated under `~/.config/gcloud/application_default_credentials.json`.
+1) Create a service account on your GCP sandbox project and call it `airglue@<project_id>.iam.gserviceaccount.com`, generate a JSON key and save to Secret Manager as a new secret with a name `airflow-connections-gcp_airglue`. See [The Secret Manager Backend](#the-secret-manager-backend) for more details on how to generate the secret value. 
+> The reason service account impersonation is not used is due to there is no support on Airflow V1 to the built-in operators.
+> It is important to rotate the key regularly when using service account keys. 
+> Airflow V2 made this available via the `impersonation_chain` argument. 
+> See https://airflow.apache.org/docs/apache-airflow-providers-google/stable/_api/airflow/providers/google/cloud/operators/bigquery/index.html 
 
 ### Build and Start up
 ```
@@ -90,7 +95,11 @@ make exec
 ### Example DAG
 There is an example DAG created in this repository called [example_glue](airglue/example/example_glue). It is designed to be a `show case` DAG that demos a lot of supported features in Airglue. 
 
-In order for this DAG to work, the `make` command must be executed with the following variables
+In order for this DAG to work, the `airglue@<project_id>.iam.gserviceaccount.com` service account must be granted the following roles
+- Project Level: BigQuery Data Editor and BigQuery Job User
+- Bucket Level: Storage Object Admin on the bucket defined below using the environment variable `AIRGLUE_EXAMPLE_BUCKET_NAME`
+
+And the `make` command must be executed with the following variables
 - `AIRGLUE_SANDBOX_PROJECT_ID`: A GCP project id for your sandbox environment.
 - `AIRGLUE_EXAMPLE_BUCKET_NAME`: An example GCS bucket used to persist data. The service account must be able to write into this bucket.
 
@@ -143,6 +152,28 @@ See  [airglue/contrib/operator/bigquery/query_runner.py](airglue/contrib/operato
 Operator Factory is a concept introduced to make the configuration file more compact and easier to read, it can also be used to define common abstractions so that the configuration file becomes smaller hence much quicker to add new integrations.
 
 Operator Factories can be added to [airglue/contrib/operator_factory](airglue/contrib/operator_factory) and by default the [default](airglue/contrib/operator_factory/default.py) Operator Factory is used.
+
+### The Secret Manager Backend
+> Important: requires Airflow version >=1.10.10   
+> Important: your user group must have been given the `Secret Manager Secret Accessor` role in order to access the secret   
+
+There are situations when using a secret (i.e. in Airflow Connections or Variables) is not avoidable. Airglue uses [Secret Manager](https://cloud.google.com/secret-manager) as the secret backend so that you do not have to store any credentials (such as service account keys) inside Airflow / Cloud Composer. 
+This makes storing secret more secure and easy to manager. For example, you can setup key rotation automation and it only has to be done in one place which is secret manager. 
+
+The Secret Manager Backend can be enabled by overwriting the following Airflow environment variables
+```
+AIRFLOW__SECRETS__BACKEND: "airflow.providers.google.cloud.secrets.secret_manager.CloudSecretManagerBackend"
+AIRFLOW__SECRETS__BACKEND_KWARGS: '{"project_id": "${AIRGLUE_SANDBOX_PROJECT_ID}", ...}'
+```
+
+On the Local Docker Composer environment, this has been done in [docker-composer.yaml](docker-compose.yml). 
+Because secrets stored in Secret Manager has to be a valid URI. I.e. for a Airflow GCP connection, the secret value has to be in the format of
+```
+google-cloud-platform://?extra__google_cloud_platform__project={project_id}&extra__google_cloud_platform__keyfile_dict={quoted_key}"
+```
+To make this easier to generate, we've created a collection of tools under [tools/secret_value_creator](tools/secret_value_creator) which can be used to generate the URI.
+
+For more information on exactly how to use this, see [Alternative secrets backend](https://airflow.apache.org/docs/apache-airflow/1.10.10/howto/use-alternative-secrets-backend.html)
 
 ### Airflow / Cloud Composer Versions
 In order to make the setup compatible with [Cloud Composer](https://cloud.google.com/composer) as much as possible, we've created a separate release for each Composer version under [Local Docker Release](infrastructure/docker/release). 
